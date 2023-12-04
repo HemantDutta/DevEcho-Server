@@ -1,3 +1,4 @@
+//Imports
 import express from 'express';
 import {configDotenv} from "dotenv";
 import {createClient} from '@supabase/supabase-js';
@@ -27,6 +28,26 @@ const supabase = createClient(process.env.SUPA_URL, process.env.SUPR_KEY);
 //Default URL
 app.get("/", (req, res) => {
     res.send(`<h1>DevEcho Server</h1>`);
+});
+
+//Sign-up
+app.post("/sign-up", async (req, res) => {
+    let {name, email, password} = req.body;
+
+    const {data} = await supabase
+        .from('users')
+        .select()
+        .eq("email", email);
+    if (data !== null) res.send("exists");
+    else {
+        const {error} = await supabase
+            .from('users')
+            .insert({name: name, email: email, password: password});
+        if (Object.keys(error).length!==0) {
+            console.log(error);
+            res.send("fail");
+        } else res.send("success");
+    }
 });
 
 //Fetch Posts
