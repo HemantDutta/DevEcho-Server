@@ -61,7 +61,7 @@ app.post("/log-in", async (req, res) => {
         .select()
         .eq("email", email);
 
-    if (data[0]) {
+    if (data.length!==0) {
         if (data[0].password === password) {
             res.send("success");
         } else {
@@ -175,6 +175,23 @@ app.get("/get-categories", async (req, res) => {
         .select();
 
     res.send(data);
+});
+
+//Search
+app.post("/search", async (req, res) => {
+    let {search} = req.body;
+    search = search.toLowerCase();
+    const {data} = await supabase
+        .from("posts")
+        .select()
+        .or(`title.ilike.%${search}%, content.ilike.%${search}%, tags.ilike.%${search}%`);
+
+    console.log(data);
+    if (data.length !== 0) {
+        res.send(data);
+    } else {
+        res.send("no_data");
+    }
 });
 
 //Server Listener
