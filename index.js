@@ -168,6 +168,15 @@ app.post("/del-post", async (req, res) => {
     else res.send("success");
 });
 
+//Get Categories
+app.get("/get-categories", async (req, res) => {
+    const {data} = await supabase
+        .from("category")
+        .select();
+
+    res.send(data);
+});
+
 //Server Listener
 app.listen(port, () => {
     console.log("The server is listening on http://localhost:" + port);
